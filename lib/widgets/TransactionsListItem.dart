@@ -28,12 +28,20 @@ class TransactionListItem extends StatelessWidget {
             style: Theme.of(context).textTheme.headline6,
           ),
           subtitle: Text(DateFormat.yMMMd().format(_transaction.date)),
-          trailing: IconButton(
-              color: Theme.of(context).errorColor,
-              icon: Icon(Icons.delete),
-              onPressed: () {
-                _deleteTx(_transaction.id);
-              }),
+          trailing: MediaQuery.of(context).size.width > 400
+              ? FlatButton.icon(
+                  onPressed: () {
+                    _deleteTx(_transaction.id);
+                  },
+                  icon: Icon(Icons.delete),
+                  textColor: Theme.of(context).errorColor,
+                  label: Text('Delete'))
+              : IconButton(
+                  color: Theme.of(context).errorColor,
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    _deleteTx(_transaction.id);
+                  }),
         ));
   }
 }

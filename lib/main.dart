@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:personal_expenses/widgets/chart.dart';
-import 'package:personal_expenses/widgets/inputs.dart';
-import 'widgets/transactions_list.dart';
+import './widgets/chart.dart';
+import './widgets/inputs.dart';
+import './widgets/transactions_list.dart';
 import './models/transaction.dart';
 
 void main() => runApp(MyApp());
@@ -61,6 +61,7 @@ class _MyAppState extends State<MyHome> {
         amount: 143456.45,
         date: DateTime.now().subtract(Duration(days: 3))),
   ];
+  bool _showChart = false;
 
   void _deleteTx(String id) {
     setState(() {
@@ -93,28 +94,67 @@ class _MyAppState extends State<MyHome> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Pesonal Expenses',
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => _startNewTransaction(context),
-          )
-        ],
+    final mediaQuery = MediaQuery.of(context);
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
+    final appBar = AppBar(
+      title: Text(
+        'Pesonal Expenses',
       ),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () => _startNewTransaction(context),
+        )
+      ],
+    );
+    final txList = Container(
+      height: (mediaQuery.size.height -
+              appBar.preferredSize.height -
+              mediaQuery.padding.top) *
+          0.7,
+      child: TransactionsList(_transactions, _deleteTx),
+    );
+    return Scaffold(
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(10),
-              child: Chart(_transactions),
-            ),
-            TransactionsList(_transactions, _deleteTx),
+            if (isLandscape)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('show chart'),
+                  Switch(
+                    value: _showChart,
+                    onChanged: (val) {
+                      setState(() {
+                        _showChart = val;
+                      });
+                    },
+                  )
+                ],
+              ),
+            if (!isLandscape)
+              Container(
+                padding: EdgeInsets.all(5),
+                height: (mediaQuery.size.height -
+                        appBar.preferredSize.height -
+                        mediaQuery.padding.top) *
+                    0.3,
+                child: Chart(_transactions),
+              ),
+            if (!isLandscape) txList,
+            if (isLandscape)
+              _showChart
+                  ? Container(
+                      padding: EdgeInsets.all(5),
+                      height: (mediaQuery.size.height -
+                              appBar.preferredSize.height -
+                              mediaQuery.padding.top) *
+                          0.5,
+                      child: Chart(_transactions),
+                    )
+                  : txList
           ],
         ),
       ),

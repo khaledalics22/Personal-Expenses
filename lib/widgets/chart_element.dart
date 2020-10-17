@@ -7,55 +7,54 @@ class ChartElement extends StatelessWidget {
   ChartElement(this.day, this.totalTx, this.fractionSize);
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      fit: FlexFit.tight,
-      child: Container(
-        margin: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Container(
-              height: 20,
-              child: FittedBox(
-                child: Text('\$${totalTx.toStringAsFixed(0)}'),
-              ),
+    return LayoutBuilder(builder: (ctx, constraints) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Container(
+            height: constraints.maxHeight * 0.15,
+            child: FittedBox(
+              child: Text('\$${totalTx.toStringAsFixed(0)}'),
             ),
-            SizedBox(
-              height: 4,
-            ),
-            Container(
-              height: 50,
-              width: 5,
-              child: Stack(
-                alignment: Alignment.bottomCenter,
-                children: [
-                  Container(
+          ),
+          SizedBox(
+            height: constraints.maxHeight * 0.05,
+          ),
+          Container(
+            height: constraints.maxHeight * 0.6,
+            width: 5,
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color.fromRGBO(220, 220, 220, 1)),
+                ),
+                FractionallySizedBox(
+                  heightFactor: fractionSize,
+                  child: Container(
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Color.fromRGBO(220, 220, 220, 1)),
-                  ),
-                  FractionallySizedBox(
-                    heightFactor: fractionSize,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            SizedBox(
-              height: 4,
-            ),
-            FittedBox(
+          ),
+          SizedBox(
+            height: constraints.maxHeight * 0.05,
+          ),
+          Container(
+            height: constraints.maxHeight * 0.15,
+            child: FittedBox(
               child: Text(day),
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ],
+      );
+    });
   }
 }

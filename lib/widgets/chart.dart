@@ -6,7 +6,7 @@ import '../widgets/chart_element.dart';
 class Chart extends StatelessWidget {
   final List<Transaction> _transactions;
   Chart(this._transactions);
-  List<ChartElement> get getGroupedTransactions {
+  List<Map<String, Object>> get getGroupedTransactions {
     return List.generate(7, (index) {
       final weekDay = DateTime.now().subtract(
         Duration(days: index),
@@ -20,9 +20,12 @@ class Chart extends StatelessWidget {
         }
       }
 
-      return ChartElement(DateFormat.E().format(weekDay), totalSum,
-          _totalTxAmount > 0 ? totalSum / _totalTxAmount : 0);
-    }).reversed.toList();
+      return {
+        'day': DateFormat.E().format(weekDay),
+        'tx': totalSum,
+        'fraction': _totalTxAmount > 0.0 ? totalSum / _totalTxAmount : 0.0
+      };
+    });
   }
 
   double get _totalTxAmount {
@@ -39,7 +42,15 @@ class Chart extends StatelessWidget {
       elevation: 6,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: getGroupedTransactions,
+        children: getGroupedTransactions.map((tx) {
+          return Flexible(
+            fit: FlexFit.tight,
+            child: Padding(
+              padding: EdgeInsets.all(4),
+              child: ChartElement(tx['day'], tx['tx'], tx['fraction']),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
